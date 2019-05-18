@@ -9,6 +9,15 @@ defmodule MugwarriorWeb.Router do
     plug :put_secure_browser_headers
   end
 
+  pipeline :guardian do
+    plug(MugwarriorWeb.Guardian.Plug)
+    plug(MugwarriorWeb.Guardian.CurrentUserPlug)
+  end
+
+  pipeline :ensure_auth do
+    plug(Guardian.Plug.EnsureAuthenticated)
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end

@@ -65,6 +65,10 @@ config :mugwarrior, MugwarriorWeb.Endpoint,
     ]
   ]
 
+config :mugwarrior, MugwarriorWeb.Guardian.Tokenizer,
+  issuer: "mugwarrior",
+  secret_key: "hLHQsT1AmbgE4bfRYbVEsefepbFwFnhp5yCyv3zxVisHXiVy2mSvT3hO+DLx47DK"
+
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"
 

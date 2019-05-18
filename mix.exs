@@ -48,7 +48,7 @@ defmodule Mugwarrior.MixProject do
       {:dialyxir, "~> 1.0.0-rc.6", only: [:dev], runtime: false},
       # For authentication
       {:bcrypt_elixir, "~> 2.0"},
-      {:guardian, "~> 1.0"},
+      {:guardian, "~> 1.0"}
     ]
   end
 
