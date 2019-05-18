@@ -5,6 +5,7 @@ defmodule Mugwarrior.Application do
 
   use Application
 
+  # credo:disable-for-next-line Credo.Check.Readability.Specs
   def start(_type, _args) do
     # List all child processes to be supervised
     children = [
@@ -24,6 +25,8 @@ defmodule Mugwarrior.Application do
 
   # Tell Phoenix to update the endpoint configuration
   # whenever the application is updated.
+  #
+  # credo:disable-for-next-line Credo.Check.Readability.Specs
   def config_change(changed, _new, removed) do
     MugwarriorWeb.Endpoint.config_change(changed, removed)
     :ok

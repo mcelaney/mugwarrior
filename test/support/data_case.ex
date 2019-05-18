@@ -13,6 +13,8 @@ defmodule Mugwarrior.DataCase do
   """
 
   use ExUnit.CaseTemplate
+  alias Ecto.Adapters.SQL.Sandbox
+  alias Mugwarrior.Repo
 
   using do
     quote do
@@ -26,10 +28,10 @@ defmodule Mugwarrior.DataCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Mugwarrior.Repo)
+    :ok = Sandbox.checkout(Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Mugwarrior.Repo, {:shared, self()})
+      Sandbox.mode(Repo, {:shared, self()})
     end
 
     :ok
@@ -43,6 +45,8 @@ defmodule Mugwarrior.DataCase do
       assert %{password: ["password is too short"]} = errors_on(changeset)
 
   """
+  #
+  # credo:disable-for-next-line Credo.Check.Readability.Specs
   def errors_on(changeset) do
     Ecto.Changeset.traverse_errors(changeset, fn {message, opts} ->
       Regex.replace(~r"%{(\w+)}", message, fn _, key ->
