@@ -45,7 +45,10 @@ defmodule Mugwarrior.MixProject do
       {:plug_cowboy, "~> 2.0"},
       # Linting
       {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 1.0.0-rc.6", only: [:dev], runtime: false}
+      {:dialyxir, "~> 1.0.0-rc.6", only: [:dev], runtime: false},
+      # For authentication
+      {:bcrypt_elixir, "~> 2.0"},
+      {:guardian, "~> 1.0"},
     ]
   end
 
