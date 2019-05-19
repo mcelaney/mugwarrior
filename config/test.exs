@@ -18,3 +18,7 @@ config :mugwarrior, MugwarriorWeb.Endpoint,
 config :logger, level: :warn
 
 config :bcrypt_elixir, :log_rounds, 4
+
+config :mugwarrior, MugwarriorWeb.Guardian.Tokenizer,
+  issuer: "mugwarrior",
+  secret_key: "token"

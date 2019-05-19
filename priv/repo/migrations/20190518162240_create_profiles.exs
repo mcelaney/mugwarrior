@@ -3,8 +3,7 @@ defmodule Mugwarrior.Repo.Migrations.CreateProfiles do
 
   def change do
     create table(:profiles) do
-      add :slug, :string
-      add :image, :string
+      add :slug, :citext, null: false
       add :first, :string
       add :last, :string
       add :description, :text

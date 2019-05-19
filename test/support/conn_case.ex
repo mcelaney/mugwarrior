@@ -21,10 +21,29 @@ defmodule MugwarriorWeb.ConnCase do
     quote do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
+      alias Mugwarrior.Signup
+      alias MugwarriorWeb.Guardian.Tokenizer.Plug, as: GuardianPlug
       alias MugwarriorWeb.Router.Helpers, as: Routes
 
       # The default endpoint for testing
       @endpoint MugwarriorWeb.Endpoint
+
+      @spec authed_conn(Plug.Conn.t()) :: Plug.Conn.t()
+      def authed_conn(conn) do
+        user_params = %{password: "some password", username: "some username"}
+        {:ok, user} = Signup.create_user(user_params)
+
+        conn
+        |> bypass_through(Routes, [:browser, :guardian, :ensure_auth])
+        |> GuardianPlug.sign_in(user)
+      end
+
+      @spec authed_conn(Plug.Conn.t(), Ecto.Schema.t()) :: Plug.Conn.t()
+      def authed_conn(conn, user) do
+        conn
+        |> bypass_through(Routes, [:browser, :guardian, :ensure_auth])
+        |> GuardianPlug.sign_in(user)
+      end
     end
   end
 

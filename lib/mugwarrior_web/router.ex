@@ -23,9 +23,34 @@ defmodule MugwarriorWeb.Router do
   end
 
   scope "/", MugwarriorWeb do
-    pipe_through :browser
+    pipe_through([:browser, :guardian, :ensure_auth])
 
-    get "/", PageController, :index
+    resources("/profile", ProfileController, only: [:edit, :update], singleton: true)
+    resources("/members", ProfileController, only: [:index, :show])
+  end
+
+  scope "/", MugwarriorWeb do
+    # Use the default browser stack
+    pipe_through([:browser, :guardian])
+
+    get("/", PageController, :index)
+  end
+
+  scope "/signup", MugwarriorWeb.Signup, as: :signup do
+    pipe_through([:browser, :guardian])
+
+    resources("/", UserController, only: [:new, :create])
+  end
+
+  scope "/", MugwarriorWeb.Auth, as: :auth do
+    pipe_through([:browser, :guardian, :ensure_auth])
+    post("/logout", UserController, :delete)
+  end
+
+  scope "/auth", MugwarriorWeb.Auth, as: :auth do
+    pipe_through([:browser, :guardian])
+
+    resources("/", UserController, only: [:new, :create])
   end
 
   # Other scopes may use custom stacks.
