@@ -4,27 +4,38 @@
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Mugwarrior · Phoenix Framework</title>
+    <title>Mugwarrior</title>
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
   </head>
   <body>
     <header>
-      <section class="container">
+      <section>
+        <%= link(img_tag(Routes.static_path(@conn, "/images/phoenix.png"), alt: gettext("%{name} Logo", name: "Mugwarrior"), height: 75), to: logo_link(@conn)) %>
+      </section>
+      <section>
         <nav role="navigation">
-          <ul class="nav nav-pills">
+          <ul>
           <%= if is_nil @conn.assigns[:current_user] do %>
             <li><%= link gettext("Create Account"), to: Routes.signup_user_path(@conn, :new) %></li>
             <li><%= link gettext("Log In"), to: Routes.auth_user_path(@conn, :new) %></li>
           <% else %>
             <li><%= link gettext("Edit Profile"), to: Routes.profile_path(@conn, :edit) %></li>
-            <li><%= link gettext("Logout"), to: Routes.auth_user_path(@conn, :delete), method: :post%></li>
+            <li><%= link gettext("Logout"), to: Routes.auth_user_path(@conn, :delete), method: :post %></li>
+            <li>
+              <p><%= gettext("Organizations") %></p>
+              <ul>
+                <%= for org <- organizations(@conn) do %>
+                  <li><%= link org.name, to: Routes.organization_path(@conn, :show, org.slug) %></li>
+                <% end %>
+                <li><%= link gettext("New Swap Group"), to: Routes.membership_organization_path(@conn, :new) %></li>
+              </ul>
+            </li>
           <% end %>
           </ul>
         </nav>
-        <%= link(img_tag(Routes.static_path(@conn, "/images/phoenix.png"), alt: "MugWarrior Logo"), to: Routes.page_path(@conn, :index)) %>
       </section>
     </header>
-    <main role="main" class="container">
+    <main role="main">
       <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
       <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
       <%= render @view_module, @view_template, assigns %>

@@ -1,6 +1,7 @@
 defmodule MugwarriorWeb.Signup.UserController do
   use MugwarriorWeb, :controller
 
+  alias Mugwarrior.Membership
   alias Mugwarrior.Signup
   alias Mugwarrior.Signup.User
   alias MugwarriorWeb.Guardian.Tokenizer.Plug, as: GuardianPlug
@@ -16,13 +17,13 @@ defmodule MugwarriorWeb.Signup.UserController do
 
   @spec create(Plug.Conn.t(), map) :: Plug.Conn.t() | no_return()
   def create(conn, %{"user" => user_params}) do
-    case Signup.create_user(user_params) do
-      {:ok, user} ->
-        conn
-        |> put_flash(:info, "User created successfully.")
-        |> GuardianPlug.sign_in(user)
-        |> redirect(to: Routes.page_path(conn, :index))
-
+    with {:ok, user} <- Signup.create_user(user_params),
+         _ <- Membership.change_profile(user) do
+      conn
+      |> put_flash(:info, gettext("User created successfully."))
+      |> GuardianPlug.sign_in(user)
+      |> redirect(to: Routes.page_path(conn, :dashboard))
+    else
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
     end

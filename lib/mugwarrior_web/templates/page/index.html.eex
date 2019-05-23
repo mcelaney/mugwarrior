@@ -1,5 +1,7 @@
-<section class="phx-hero">
-  <h1><%= gettext "Welcome to the %{name} beta!", name: "MugWarrior" %></h1>
-  <p><%= gettext "An app to help manage your beer swaps." %></p>
-  <p><%= gettext "This app is free to use for now - once we move out of beta we'll ask you to tip us a few bucks per swap to help with hosting and what not." %></p>
-</section>
+<div>
+  <section class="phx-hero">
+    <h1><%= gettext "Welcome to the %{name} beta!", name: "MugWarrior" %></h1>
+    <p><%= gettext "An app to help manage your beer swaps." %></p>
+    <p><%= gettext "This app is free to use for now - once we move out of beta we'll ask you to tip us a few bucks per swap to help with hosting and what not." %></p>
+  </section>
+</div>

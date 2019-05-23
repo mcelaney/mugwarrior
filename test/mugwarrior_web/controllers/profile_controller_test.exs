@@ -33,15 +33,7 @@ defmodule MugwarriorWeb.ProfileControllerTest do
         |> authed_conn(user)
         |> put(Routes.profile_path(conn, :update), profile: @update_attrs)
 
-      assert redirected_to(updated_conn) == Routes.page_path(updated_conn, :index)
-
-      profile_conn =
-        updated_conn
-        |> recycle()
-        |> authed_conn(user)
-        |> get(Routes.profile_path(updated_conn, :show, "mac2"))
-
-      assert html_response(profile_conn, 200) =~ "Pattern Toaster"
+      assert redirected_to(updated_conn) == Routes.page_path(updated_conn, :dashboard)
     end
 
     test "update profile renders errors when data is invalid", %{conn: conn, user: user} do

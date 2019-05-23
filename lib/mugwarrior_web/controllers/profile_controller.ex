@@ -2,18 +2,9 @@ defmodule MugwarriorWeb.ProfileController do
   use MugwarriorWeb, :controller
 
   alias Mugwarrior.Membership
-
-  @spec index(Plug.Conn.t(), any) :: Plug.Conn.t()
-  def index(conn, _params) do
-    profiles = Membership.list_profiles()
-    render(conn, "index.html", profiles: profiles)
-  end
-
-  @spec show(Plug.Conn.t(), map) :: Plug.Conn.t()
-  def show(conn, %{"id" => id}) do
-    profile = Membership.get_profile!(id)
-    render(conn, "show.html", profile: profile)
-  end
+  alias Mugwarrior.Membership.Organization
+  alias Mugwarrior.Membership.Profile
+  alias Mugwarrior.Membership.User
 
   @spec edit(Plug.Conn.t(), any) :: Plug.Conn.t()
   def edit(conn, _params) do
@@ -28,13 +19,38 @@ defmodule MugwarriorWeb.ProfileController do
     case conn |> current_user() |> Membership.update_profile(params) do
       {:ok, _} ->
         conn
-        |> put_flash(:info, "User updated successfully.")
-        |> redirect(to: Routes.page_path(conn, :index))
+        |> put_flash(:info, gettext("User updated successfully."))
+        |> redirect(to: Routes.page_path(conn, :dashboard))
 
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", changeset: changeset)
     end
   end
 
+  def update(conn, %{"organization_id" => slug, "role" => "promote", "profile_id" => profile_id}) do
+    Membership.promote_profile_to_org_admin(%{id: profile_id}, get_org(conn, slug))
+
+    _update(conn, gettext("User promoted successfully."), slug)
+  end
+
+  def update(conn, %{"organization_id" => slug, "role" => "demote", "profile_id" => profile_id}) do
+    Membership.demote_profile_to_org_member(%{id: profile_id}, get_org(conn, slug))
+
+    _update(conn, gettext("User demoted successfully."), slug)
+  end
+
+  defp _update(conn, message, slug) do
+    conn
+    |> put_flash(:info, message)
+    |> redirect(to: Routes.organization_path(conn, :show, slug))
+  end
+
+  @spec current_user(Plug.Conn.t()) :: User.t()
   defp current_user(conn), do: conn.assigns.current_user
+
+  @spec profile(Plug.Conn.t()) :: Profile.t()
+  defp profile(%{assigns: %{current_user: %{profile: profile}}}), do: profile
+
+  @spec get_org(Plug.Conn.t(), String.t()) :: Organization.t()
+  defp get_org(conn, slug), do: conn |> profile() |> Membership.get_organization!(slug)
 end
