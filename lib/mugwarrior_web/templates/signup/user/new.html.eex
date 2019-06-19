@@ -1,5 +1,5 @@
 <div class="container">
-  <h2>New User</h2>
+  <h2><%= gettext("New User") %></h2>
 
   <%= render MugwarriorWeb.SharedView, "user_form.html", Map.put(assigns, :action, Routes.signup_user_path(@conn, :create)) %>
 </div>

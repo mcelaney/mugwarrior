@@ -1,0 +1,37 @@
+<h1><%= @org.name%></h1>
+<h2><%= gettext("Members") %></h2>
+<ul>
+<%= for org_profile <- @org.organization_profiles do %>
+  <li>
+    (<%= org_profile.role %>)
+    <%=
+      if Mugwarrior.Membership.can_demote_admins?(@org, @conn.assigns.current_user) do
+        link gettext("(Demote)"), to: Routes.organization_role_change_path(@conn, :update, @org.slug, org_profile.profile.id, role: "demote")
+      end
+    %>
+    <%=
+      if not Mugwarrior.Membership.is_organization_admin?(org_profile.role) do
+        link gettext("(Promote)"), to: Routes.organization_role_change_path(@conn, :update, @org.slug, org_profile.profile.id, role: "promote")
+      end
+    %>
+    <%= MugwarriorWeb.ProfileView.display_name(org_profile.profile) %>
+  </li>
+<% end %>
+</ul>
+
+<%= if Mugwarrior.Membership.is_organization_admin?(@org, @conn.assigns.current_user) do %>
+<h2><%= gettext("Invites") %></h2>
+<ul>
+<%= for invitation <- @org.invitations do %>
+  <li>
+    <%=
+      link gettext("(Remove)"), to: Routes.organization_invitation_path(@conn, :delete, @org.slug, invitation),
+                                method: :delete,
+                                data: [confirm: "Are you sure?"]
+    %>
+    <%= invitation.email %>
+  </li>
+<% end %>
+  <li><%= link(gettext("New Member"), to: Routes.organization_invitation_path(@conn, :new, @org.slug)) %></li>
+</ul>
+<% end %>

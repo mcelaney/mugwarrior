@@ -27,6 +27,17 @@ defmodule MugwarriorWeb.Router do
 
     resources("/profile", ProfileController, only: [:edit, :update], singleton: true)
     resources("/members", ProfileController, only: [:index, :show])
+    get("/dashboard", PageController, :dashboard)
+
+    resources("/swap_groups", Membership.OrganizationController,
+      only: [:new, :create],
+      as: :membership_organization
+    )
+
+    resources "/o", OrganizationController, only: [:show] do
+      resources "/invitation", InvitationController
+      get("/change_membership/:profile_id", ProfileController, :update, as: :role_change)
+    end
   end
 
   scope "/", MugwarriorWeb do

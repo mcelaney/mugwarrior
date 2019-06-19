@@ -6,6 +6,8 @@ defmodule Mugwarrior.Membership.Profile do
   use Ecto.Schema
   # use Arc.Ecto.Schema
   import Ecto.Changeset
+  alias Mugwarrior.Membership.Organization
+  alias Mugwarrior.Membership.OrganizationProfile
   alias Mugwarrior.Membership.User
 
   @type t :: %__MODULE__{}
@@ -17,6 +19,14 @@ defmodule Mugwarrior.Membership.Profile do
     field(:slug, :string)
 
     belongs_to(:user, User)
+    has_many(:organization_profiles, OrganizationProfile)
+
+    many_to_many(
+      :organizations,
+      Organization,
+      join_through: OrganizationProfile,
+      on_replace: :delete
+    )
 
     timestamps()
   end
@@ -35,15 +45,9 @@ defmodule Mugwarrior.Membership.Profile do
   @spec changeset(__MODULE__.t(), map) :: Ecto.Changeset.t()
   def changeset(info, attrs) do
     info
-    |> cast(attrs, [
-      :first,
-      :last,
-      :slug,
-      :description
-    ])
+    |> cast(attrs, [:first, :last, :slug, :description])
     |> validate_exclusion(:slug, [:edit, :new])
     |> validate_required([:first, :last, :slug])
-    |> validate_exclusion(:slug, [:edit, :new])
     |> unique_constraint(:slug)
   end
 end

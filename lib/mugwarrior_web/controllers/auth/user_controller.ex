@@ -19,13 +19,13 @@ defmodule MugwarriorWeb.Auth.UserController do
     case Auth.authenticate_user(user_params) do
       {:ok, user} ->
         conn
-        |> put_flash(:info, "User Logged In Successfully.")
+        |> put_flash(:info, gettext("User Logged In Successfully."))
         |> GuardianPlug.sign_in(user)
-        |> redirect(to: Routes.page_path(conn, :index))
+        |> redirect(to: Routes.page_path(conn, :dashboard))
 
       {:error, %Ecto.Changeset{} = changeset} ->
         conn
-        |> put_flash(:error, "Username/Password combination did not exist.")
+        |> put_flash(:error, gettext("Username/Password combination did not exist."))
         |> render("new.html", changeset: changeset)
     end
   end

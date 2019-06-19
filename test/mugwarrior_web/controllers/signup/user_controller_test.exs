@@ -23,9 +23,9 @@ defmodule MugwarriorWeb.Signup.UserControllerTest do
     test "redirects to homepage when data is valid", %{conn: conn} do
       posted_conn = post(conn, Routes.signup_user_path(conn, :create), user: @create_attrs)
 
-      assert redirected_to(posted_conn) == Routes.page_path(posted_conn, :index)
+      assert redirected_to(posted_conn) == Routes.page_path(posted_conn, :dashboard)
 
-      updated_conn = get(posted_conn, Routes.page_path(posted_conn, :index))
+      updated_conn = get(posted_conn, Routes.page_path(posted_conn, :dashboard))
 
       refute is_nil(updated_conn.assigns.current_user)
     end
