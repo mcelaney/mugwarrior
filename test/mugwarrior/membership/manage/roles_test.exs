@@ -1,4 +1,4 @@
-defmodule Mugwarrior.Membership.ManageRolesTest do
+defmodule Mugwarrior.Membership.Manage.RolesTest do
   use Mugwarrior.DataCase
 
   alias Mugwarrior.Membership

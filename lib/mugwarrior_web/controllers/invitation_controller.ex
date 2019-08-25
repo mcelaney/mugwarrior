@@ -30,6 +30,23 @@ defmodule MugwarriorWeb.InvitationController do
     end
   end
 
+  @spec update(Plug.Conn.t(), map) :: Plug.Conn.t() | no_return()
+  def update(conn, %{"id" => invitation_id}) do
+    invitation_id
+    |> Membership.accept_invite(conn.assigns.current_user)
+    |> case do
+      {:ok, organization} ->
+        conn
+        |> put_flash(:info, "Invitation accepted successfully.")
+        |> redirect(to: Routes.organization_path(conn, :show, organization.slug))
+
+      {:error, _} ->
+        conn
+        |> put_flash(:info, "Invitation not found.")
+        |> redirect(to: Routes.page_path(conn, :dashboard))
+    end
+  end
+
   @spec delete(Plug.Conn.t(), map) :: Plug.Conn.t() | no_return()
   def delete(conn, %{"organization_id" => slug, "id" => id}) do
     invitation = Membership.get_invitation!(slug, id)

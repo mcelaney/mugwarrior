@@ -1,4 +1,4 @@
-defmodule Mugwarrior.Membership.ManageProfiles do
+defmodule Mugwarrior.Membership.Manage.Profiles do
   @moduledoc """
   Domain logic for managing user profiles and their relationships to organizations.
 
@@ -25,9 +25,8 @@ defmodule Mugwarrior.Membership.ManageProfiles do
   @spec add_profile_to_organization(Profile.t(), Organization.t()) ::
           {:ok, Profile.t()}
   def add_profile_to_organization(%Profile{id: profile_id} = profile, %Organization{id: org_id}) do
-    with {:ok, _} <- _add_profile_to_organization(profile_id, org_id) do
-      {:ok, profile}
-    else
+    case _add_profile_to_organization(profile_id, org_id) do
+      {:ok, _} -> {:ok, profile}
       error -> error
     end
   end
@@ -39,6 +38,15 @@ defmodule Mugwarrior.Membership.ManageProfiles do
       profile_id: profile_id
     })
     |> Repo.insert()
+  end
+
+  @spec remove_profile_from_organization(pos_integer, Organization.t()) :: no_return()
+  def remove_profile_from_organization(profile_id, %Organization{id: org_id}) do
+    OrganizationProfile
+    |> where([op], op.organization_id == ^org_id)
+    |> where([op], op.profile_id == ^profile_id)
+    |> Repo.one()
+    |> Repo.delete()
   end
 
   @doc """

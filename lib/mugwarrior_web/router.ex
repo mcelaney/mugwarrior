@@ -35,8 +35,12 @@ defmodule MugwarriorWeb.Router do
     )
 
     resources "/o", OrganizationController, only: [:show] do
-      resources "/invitation", InvitationController
-      get("/change_membership/:profile_id", ProfileController, :update, as: :role_change)
+      resources "/invitation", InvitationController, only: [:new, :create, :delete]
+      get("/invitation/:id", InvitationController, :update, as: :invite_user)
+
+      get("/change_membership/:profile_id", Membership.Organization.ProfileController, :update,
+        as: :role_change
+      )
     end
   end
 

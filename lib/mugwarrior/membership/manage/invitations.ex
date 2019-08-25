@@ -1,4 +1,4 @@
-defmodule Mugwarrior.Membership.ManageInvitations do
+defmodule Mugwarrior.Membership.Manage.Invitations do
   @moduledoc """
   Domain logic for managing invitations to organizations.
 
@@ -8,6 +8,8 @@ defmodule Mugwarrior.Membership.ManageInvitations do
   import Ecto.Query
   alias Mugwarrior.Membership
   alias Mugwarrior.Membership.Invitation
+  alias Mugwarrior.Membership.Organization
+  alias Mugwarrior.Membership.User
   alias Mugwarrior.Repo
 
   defdelegate organization_id_from_slug(slug), to: Membership
@@ -29,6 +31,36 @@ defmodule Mugwarrior.Membership.ManageInvitations do
   @spec delete_invitation(Invitation.t()) :: {:ok, Invitation.t()} | {:error, Ecto.Changeset.t()}
   def delete_invitation(%Invitation{} = invitation) do
     Repo.delete(invitation)
+  end
+
+  @spec invitations_for(String.t()) :: list(Invitation.t())
+  def invitations_for(username) do
+    Invitation
+    |> where([invitation], invitation.email == ^username)
+    |> preload(:organization)
+    |> Repo.all()
+  end
+
+  @spec accept_invite(pos_integer, User.t()) :: {:ok, Organization.t()} | {:error, any}
+  def accept_invite(id, %User{} = user) do
+    with %Invitation{} = invitation <- find_invite(id, user),
+         {:ok, _} <-
+           Membership.add_profile_to_organization(user.profile, invitation.organization),
+         {:ok, _} <- delete_invitation(invitation) do
+      {:ok, invitation.organization}
+    else
+      %Ecto.NoResultsError{} -> {:error, "Invitation Not Found"}
+      error -> error
+    end
+  end
+
+  @spec find_invite(pos_integer, User.t()) :: Invitation.t()
+  defp find_invite(id, user) do
+    Invitation
+    |> where([invite], invite.email == ^user.username)
+    |> where([invite], invite.id == ^id)
+    |> preload(:organization)
+    |> Repo.one()
   end
 
   @spec get_invitation!(String.t(), pos_integer) :: Invitation.t() | no_return

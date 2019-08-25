@@ -1,4 +1,4 @@
-defmodule Mugwarrior.Membership.ManageOrganizations do
+defmodule Mugwarrior.Membership.Manage.Organizations do
   @moduledoc """
   Domain logic for managing organizations.
 
@@ -42,10 +42,8 @@ defmodule Mugwarrior.Membership.ManageOrganizations do
   @spec create_organization(Profile.t(), map) ::
           {:ok, Organization.t()} | {:error, %Ecto.Changeset{}} | no_return()
   def create_organization(%Profile{} = profile, attrs \\ %{}) do
-    with {:ok, pre_slug_org} <- _create_organization(profile, attrs),
-         {:ok, org} <- update_organization(pre_slug_org, %{slug: "org_#{pre_slug_org.id}"}) do
-      promote_profile_to_org_admin(profile, org)
-    else
+    case _create_organization(profile, attrs) do
+      {:ok, org} -> promote_profile_to_org_admin(profile, org)
       error -> error
     end
   end

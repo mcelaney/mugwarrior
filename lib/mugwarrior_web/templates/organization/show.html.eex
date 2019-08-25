@@ -10,8 +10,18 @@
       end
     %>
     <%=
-      if not Mugwarrior.Membership.is_organization_admin?(org_profile.role) do
+      if @conn.assigns.current_user_is_admin and not Mugwarrior.Membership.is_organization_admin?(org_profile.role) do
         link gettext("(Promote)"), to: Routes.organization_role_change_path(@conn, :update, @org.slug, org_profile.profile.id, role: "promote")
+      end
+    %>
+    <%=
+      if @conn.assigns.current_user_is_admin and not Mugwarrior.Membership.is_organization_admin?(org_profile.role) do
+        link gettext("(Remove)"), to: Routes.organization_role_change_path(@conn, :update, @org.slug, org_profile.profile.id, role: "remove")
+      end
+    %>
+    <%=
+      if not Mugwarrior.Membership.is_organization_admin?(org_profile.role) and @conn.assigns.current_user.profile.id == org_profile.profile_id do
+        link gettext("(Quit group)"), to: Routes.organization_role_change_path(@conn, :update, @org.slug, org_profile.profile.id, role: "quit")
       end
     %>
     <%= MugwarriorWeb.ProfileView.display_name(org_profile.profile) %>
@@ -19,7 +29,7 @@
 <% end %>
 </ul>
 
-<%= if Mugwarrior.Membership.is_organization_admin?(@org, @conn.assigns.current_user) do %>
+<%= if @conn.assigns.current_user_is_admin do %>
 <h2><%= gettext("Invites") %></h2>
 <ul>
 <%= for invitation <- @org.invitations do %>

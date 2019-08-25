@@ -1,4 +1,4 @@
-defmodule Mugwarrior.Membership.ManageRoles do
+defmodule Mugwarrior.Membership.Manage.Roles do
   @moduledoc """
   Domain logic for managing the roles users have within organizations.
 
@@ -41,14 +41,32 @@ defmodule Mugwarrior.Membership.ManageRoles do
   @spec demote_profile_to_org_member(Profile.t() | map, Organization.t()) ::
           {:ok, Organization.t()} | no_return()
   def demote_profile_to_org_member(%{id: profile_id}, %Organization{id: org_id} = org) do
-    with {:ok, _} <- change_profile_role(profile_id, org_id, OrganizationProfile.member_role()) do
-      {:ok, org}
-    else
+    case change_profile_role(profile_id, org_id, OrganizationProfile.member_role()) do
+      {:ok, _} ->
+        {:ok, org}
+
       _ ->
         raise RuntimeError,
           message: "Could not promote profile (#{profile_id}) to admin on org (#{org_id})"
     end
   end
+
+  @doc """
+  Returns a boolean indicating whether the given user is an admin of the given org
+
+  iex> is_organization_admin?(%Organziation{}, %User{})
+  true
+  """
+  @spec organization_profile_role(Organization.t(), Profile.t()) :: String.t()
+  def organization_profile_role(%Organization{} = org, profile) do
+    OrganizationProfile
+    |> where([org_profile], org_profile.organization_id == ^org.id)
+    |> where([org_profile], org_profile.profile_id == ^profile.id)
+    |> select([org_profile], coalesce(org_profile.role, "non_member"))
+    |> Repo.one()
+  end
+
+  def organization_profile_role(_, _), do: "non_member"
 
   @doc """
   Returns a boolean indicating whether the given string matched the expected
@@ -92,9 +110,10 @@ defmodule Mugwarrior.Membership.ManageRoles do
   @spec promote_profile_to_org_admin(Profile.t() | map, Organization.t()) ::
           {:ok, Organization.t()} | no_return()
   def promote_profile_to_org_admin(%{id: profile_id}, %Organization{id: org_id} = org) do
-    with {:ok, _} <- change_profile_role(profile_id, org_id, OrganizationProfile.admin_role()) do
-      {:ok, org}
-    else
+    case change_profile_role(profile_id, org_id, OrganizationProfile.admin_role()) do
+      {:ok, _} ->
+        {:ok, org}
+
       _ ->
         raise RuntimeError,
           message: "Could not promote profile (#{profile_id}) to admin on org (#{org_id})"

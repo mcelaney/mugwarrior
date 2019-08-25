@@ -1,4 +1,4 @@
-defmodule Mugwarrior.Membership.ManageProfilesTest do
+defmodule Mugwarrior.Membership.Manage.ProfilesTest do
   use Mugwarrior.DataCase
 
   alias Ecto.Changeset

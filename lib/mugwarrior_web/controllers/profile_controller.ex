@@ -2,8 +2,6 @@ defmodule MugwarriorWeb.ProfileController do
   use MugwarriorWeb, :controller
 
   alias Mugwarrior.Membership
-  alias Mugwarrior.Membership.Organization
-  alias Mugwarrior.Membership.Profile
   alias Mugwarrior.Membership.User
 
   @spec edit(Plug.Conn.t(), any) :: Plug.Conn.t()
@@ -27,30 +25,6 @@ defmodule MugwarriorWeb.ProfileController do
     end
   end
 
-  def update(conn, %{"organization_id" => slug, "role" => "promote", "profile_id" => profile_id}) do
-    Membership.promote_profile_to_org_admin(%{id: profile_id}, get_org(conn, slug))
-
-    _update(conn, gettext("User promoted successfully."), slug)
-  end
-
-  def update(conn, %{"organization_id" => slug, "role" => "demote", "profile_id" => profile_id}) do
-    Membership.demote_profile_to_org_member(%{id: profile_id}, get_org(conn, slug))
-
-    _update(conn, gettext("User demoted successfully."), slug)
-  end
-
-  defp _update(conn, message, slug) do
-    conn
-    |> put_flash(:info, message)
-    |> redirect(to: Routes.organization_path(conn, :show, slug))
-  end
-
   @spec current_user(Plug.Conn.t()) :: User.t()
   defp current_user(conn), do: conn.assigns.current_user
-
-  @spec profile(Plug.Conn.t()) :: Profile.t()
-  defp profile(%{assigns: %{current_user: %{profile: profile}}}), do: profile
-
-  @spec get_org(Plug.Conn.t(), String.t()) :: Organization.t()
-  defp get_org(conn, slug), do: conn |> profile() |> Membership.get_organization!(slug)
 end

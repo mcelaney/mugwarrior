@@ -4,10 +4,10 @@ defmodule Mugwarrior.Membership do
   """
 
   import Ecto.Query
-  alias Mugwarrior.Membership.ManageInvitations
-  alias Mugwarrior.Membership.ManageOrganizations
-  alias Mugwarrior.Membership.ManageProfiles
-  alias Mugwarrior.Membership.ManageRoles
+  alias Mugwarrior.Membership.Manage.Invitations, as: ManageInvitations
+  alias Mugwarrior.Membership.Manage.Organizations, as: ManageOrganizations
+  alias Mugwarrior.Membership.Manage.Profiles, as: ManageProfiles
+  alias Mugwarrior.Membership.Manage.Roles, as: ManageRoles
   alias Mugwarrior.Membership.User
   alias Mugwarrior.Repo
 
@@ -15,6 +15,8 @@ defmodule Mugwarrior.Membership do
   defdelegate create_invitation(slug, attrs), to: ManageInvitations
   defdelegate delete_invitation(invitation), to: ManageInvitations
   defdelegate get_invitation!(slug, id), to: ManageInvitations
+  defdelegate invitations_for(username), to: ManageInvitations
+  defdelegate accept_invite(id, user), to: ManageInvitations
 
   defdelegate change_organization(org), to: ManageOrganizations
   defdelegate create_organization(profile, attrs), to: ManageOrganizations
@@ -25,6 +27,7 @@ defmodule Mugwarrior.Membership do
   defdelegate update_organization(org, attrs), to: ManageOrganizations
 
   defdelegate add_profile_to_organization(profile, org), to: ManageProfiles
+  defdelegate remove_profile_from_organization(profile_id, org), to: ManageProfiles
   defdelegate change_profile(user), to: ManageProfiles
   defdelegate get_profile!(identifier), to: ManageProfiles
   defdelegate list_organizations_for_profile(profile), to: ManageProfiles
@@ -35,6 +38,7 @@ defmodule Mugwarrior.Membership do
   defdelegate is_organization_admin?(org, user), to: ManageRoles
   defdelegate is_organization_admin?(role), to: ManageRoles
   defdelegate promote_profile_to_org_admin(profile, org), to: ManageRoles
+  defdelegate organization_profile_role(profile, org), to: ManageRoles
 
   @spec get_user(pos_integer | String.t()) :: {:ok, User.t()} | nil
   def get_user(id) do

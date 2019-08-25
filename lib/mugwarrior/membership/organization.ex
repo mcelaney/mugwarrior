@@ -35,7 +35,7 @@ defmodule Mugwarrior.Membership.Organization do
   def changeset(org, attrs) do
     org
     |> cast(attrs, [:name, :slug])
-    |> validate_required([:name])
+    |> validate_required([:name, :slug])
     |> unique_constraint(:name)
     |> unique_constraint(:slug)
   end

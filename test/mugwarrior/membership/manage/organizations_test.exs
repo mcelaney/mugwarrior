@@ -1,4 +1,4 @@
-defmodule Mugwarrior.Membership.ManageOrganizationsTest do
+defmodule Mugwarrior.Membership.Manage.OrganizationsTest do
   use Mugwarrior.DataCase
 
   alias Mugwarrior.Membership
@@ -8,7 +8,6 @@ defmodule Mugwarrior.Membership.ManageOrganizationsTest do
   alias Mugwarrior.Membership.User
   alias Mugwarrior.Repo
 
-  @valid_membership_attrs %{name: "Think Company"}
   @valid_organization_attrs %{name: "WebLinc", slug: "weblinc"}
 
   test "change_organization/1" do
@@ -26,8 +25,8 @@ defmodule Mugwarrior.Membership.ManageOrganizationsTest do
     test "create_organization/2 allows a user to become an admin of a new org", %{
       user: %{profile: profile}
     } do
-      {:ok, result} = Membership.create_organization(profile, @valid_membership_attrs)
-      assert result.slug == "org_#{result.id}"
+      {:ok, result} = Membership.create_organization(profile, @valid_organization_attrs)
+      assert result.slug == "weblinc"
 
       org_profile =
         OrganizationProfile

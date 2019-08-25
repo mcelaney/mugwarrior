@@ -17,7 +17,7 @@ defmodule MugwarriorWeb.ProfileControllerTest do
 
   describe "given a user with a profile" do
     setup do
-      user = %User{profile: %Profile{slug: "mac"}} |> Repo.insert!()
+      user = %User{profile: %Profile{slug: "mac"}, username: "mac@example.com"} |> Repo.insert!()
 
       [user: Membership.get_user(user.id)]
     end

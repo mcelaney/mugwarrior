@@ -3,6 +3,7 @@ defmodule MugwarriorWeb.Guardian.CurrentUserPlug do
   Plug that populates the current_user assigns
   """
 
+  alias Mugwarrior.Membership
   alias MugwarriorWeb.Guardian.Tokenizer.Plug, as: GuardianPlug
   alias Plug.Conn
 
@@ -11,6 +12,16 @@ defmodule MugwarriorWeb.Guardian.CurrentUserPlug do
 
   @spec call(Plug.Conn.t(), any) :: Plug.Conn.t()
   def call(conn, _opts) do
-    Conn.assign(conn, :current_user, GuardianPlug.current_resource(conn))
+    user = GuardianPlug.current_resource(conn)
+
+    conn
+    |> Conn.assign(:current_user, user)
+    |> Conn.assign(:current_user_invitations, user_invitations(user))
   end
+
+  defp user_invitations(%{username: username}) do
+    Membership.invitations_for(username)
+  end
+
+  defp user_invitations(_), do: []
 end

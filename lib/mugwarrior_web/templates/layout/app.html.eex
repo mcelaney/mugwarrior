@@ -22,11 +22,23 @@
             <li><%= link gettext("Edit Profile"), to: Routes.profile_path(@conn, :edit) %></li>
             <li><%= link gettext("Logout"), to: Routes.auth_user_path(@conn, :delete), method: :post %></li>
             <li>
-              <p><%= gettext("Organizations") %></p>
+              <%= gettext("Organizations") %>
               <ul>
-                <%= for org <- organizations(@conn) do %>
-                  <li><%= link org.name, to: Routes.organization_path(@conn, :show, org.slug) %></li>
-                <% end %>
+                <li>Your Swap Groups
+                  <ul>
+                    <%= for org <- organizations(@conn) do %>
+                      <li><%= link org.name, to: Routes.organization_path(@conn, :show, org.slug) %></li>
+                    <% end %>
+                  </ul>
+                </li>
+                <li>Your Invitations
+                  <ul>
+                    <%= for %{id: id, organization: org} <- invitations(@conn) do %>
+                      <li><%= org.name %> <%= link "(Accept)", to: Routes.organization_invite_user_path(@conn, :update, org.slug, id) %>
+                      </li>
+                    <% end %>
+                  </ul>
+                </li>
                 <li><%= link gettext("New Swap Group"), to: Routes.membership_organization_path(@conn, :new) %></li>
               </ul>
             </li>
