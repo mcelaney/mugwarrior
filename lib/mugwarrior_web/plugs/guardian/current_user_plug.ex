@@ -10,7 +10,7 @@ defmodule MugwarriorWeb.Guardian.CurrentUserPlug do
   @spec init(any) :: any
   def init(opts), do: opts
 
-  @spec call(Plug.Conn.t(), any) :: Plug.Conn.t()
+  @spec call(Conn.t(), any) :: Conn.t()
   def call(conn, _opts) do
     user = GuardianPlug.current_resource(conn)
 

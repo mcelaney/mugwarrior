@@ -20,12 +20,14 @@ defmodule Mugwarrior.Membership.Manage.Roles do
   iex> can_demote_admins?(profile)
   true
   """
-  @spec can_demote_admins?(Organization.t(), User.t()) :: boolean
-  def can_demote_admins?(org, user) do
+  @spec can_demote_admins?(User.t() | any, Organization.t()) :: boolean
+  def can_demote_admins?(%User{} = user, org) do
     org
     |> is_organization_admin?(user)
     |> Kernel.&&(has_multiple_admins?(org))
   end
+
+  def can_demote_admins?(_, _), do: false
 
   @doc """
   Promotes a given profile to an admin for a given a organization.

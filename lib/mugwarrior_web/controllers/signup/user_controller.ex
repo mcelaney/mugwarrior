@@ -5,8 +5,9 @@ defmodule MugwarriorWeb.Signup.UserController do
   alias Mugwarrior.Signup
   alias Mugwarrior.Signup.User
   alias MugwarriorWeb.Guardian.Tokenizer.Plug, as: GuardianPlug
+  alias Plug.Conn
 
-  @spec new(Plug.Conn.t(), any) :: Plug.Conn.t()
+  @spec new(Conn.t(), any) :: Conn.t()
   def new(conn, _params) do
     changeset = Signup.change_user(%User{})
 
@@ -15,7 +16,7 @@ defmodule MugwarriorWeb.Signup.UserController do
     |> render("new.html", changeset: changeset)
   end
 
-  @spec create(Plug.Conn.t(), map) :: Plug.Conn.t() | no_return()
+  @spec create(Conn.t(), map) :: Conn.t() | no_return()
   def create(conn, %{"user" => user_params}) do
     with {:ok, user} <- Signup.create_user(user_params),
          _ <- Membership.change_profile(user) do

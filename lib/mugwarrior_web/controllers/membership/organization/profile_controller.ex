@@ -4,11 +4,12 @@ defmodule MugwarriorWeb.Membership.Organization.ProfileController do
   alias Mugwarrior.Membership
   alias Mugwarrior.Membership.Organization
   alias Mugwarrior.Membership.Profile
+  alias Plug.Conn
 
   plug MugwarriorWeb.CurrentOrganizationPlug
   plug MugwarriorWeb.EnsureUserAuthorizedPlug
 
-  @spec update(Plug.Conn.t(), map) :: Plug.Conn.t() | no_return()
+  @spec update(Conn.t(), map) :: Conn.t() | no_return()
   def update(%{assigns: %{current_user_is_admin: true}} = conn, %{
         "role" => role,
         "profile_id" => profile_id
@@ -51,9 +52,9 @@ defmodule MugwarriorWeb.Membership.Organization.ProfileController do
     |> redirect(to: Routes.organization_path(conn, :show, slug))
   end
 
-  @spec current_organization(Plug.Conn.t()) :: Organization.t()
+  @spec current_organization(Conn.t()) :: Organization.t()
   defp current_organization(conn), do: conn.assigns.current_organization
 
-  @spec profile(Plug.Conn.t()) :: Profile.t()
+  @spec profile(Conn.t()) :: Profile.t()
   defp profile(%{assigns: %{current_user: %{profile: profile}}}), do: profile
 end

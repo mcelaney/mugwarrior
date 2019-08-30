@@ -4,8 +4,9 @@ defmodule MugwarriorWeb.Guardian.ErrorHandler do
   """
 
   import Plug.Conn
+  alias Plug.Conn
 
-  @spec auth_error(Plug.Conn.t(), {atom, any}, any) :: Plug.Conn.t()
+  @spec auth_error(Conn.t(), {atom, any}, any) :: Conn.t()
   def auth_error(conn, {type, _reason}, _opts) do
     conn
     |> put_resp_content_type("text/plain")

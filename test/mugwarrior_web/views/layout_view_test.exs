@@ -1,10 +1,11 @@
 defmodule MugwarriorWeb.LayoutViewTest do
   use MugwarriorWeb.ConnCase, async: true
   alias MugwarriorWeb.LayoutView
+  alias Plug.Conn
 
   test "logo_link/1 returns an index url with no current user", %{conn: conn} do
     conn
-    |> Plug.Conn.assign(:current_user, nil)
+    |> Conn.assign(:current_user, nil)
     |> LayoutView.logo_link()
     |> Kernel.==("/")
     |> assert()
@@ -12,7 +13,7 @@ defmodule MugwarriorWeb.LayoutViewTest do
 
   test "logo_link/1 returns an index url with a non-nil current user", %{conn: conn} do
     conn
-    |> Plug.Conn.assign(:current_user, "any non nil value")
+    |> Conn.assign(:current_user, "any non nil value")
     |> LayoutView.logo_link()
     |> Kernel.==("/dashboard")
     |> assert()

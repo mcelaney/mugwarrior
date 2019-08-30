@@ -41,7 +41,11 @@ defmodule Mugwarrior.Membership.Manage.InvitationsTest do
     setup do
       org = %Organization{slug: "think", name: "Think Company"} |> Repo.insert!()
       email = "michael.jackson@example.com"
-      user = %User{username: "michael.jackson@example.com", profile: %Profile{slug: "mac"}} |> Repo.insert!()
+
+      user =
+        %User{username: "michael.jackson@example.com", profile: %Profile{slug: "mac"}}
+        |> Repo.insert!()
+
       {:ok, invite} = Membership.create_invitation(org.slug, %{"email" => email})
 
       [invite: invite, org: org, email: email, user: user]
@@ -50,12 +54,12 @@ defmodule Mugwarrior.Membership.Manage.InvitationsTest do
     test "delete_invitation/1", %{invite: invite} do
       {result, _} = Membership.delete_invitation(invite)
       assert result == :ok
-      deleted_invite = Invitation |> where([i], i.id == ^invite.id) |> Repo.one
+      deleted_invite = Invitation |> where([i], i.id == ^invite.id) |> Repo.one()
       assert deleted_invite == nil
     end
 
     test "invitations_for/1", %{invite: invite, email: email} do
-      [item|[]] = Membership.invitations_for(email)
+      [item | []] = Membership.invitations_for(email)
       assert item.id == invite.id
     end
 
@@ -67,7 +71,8 @@ defmodule Mugwarrior.Membership.Manage.InvitationsTest do
       # Should remove the original invite
       assert user.username |> Membership.invitations_for() |> Enum.count(0)
       # SHould make the user a member
-      assert Membership.organization_profile_role(org, user.profile) == OrganizationProfile.member_role()
+      assert Membership.organization_profile_role(org, user.profile) ==
+               OrganizationProfile.member_role()
     end
 
     test "get_invitation!", %{invite: invite, org: %{slug: slug}} do

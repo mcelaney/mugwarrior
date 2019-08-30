@@ -42,6 +42,8 @@ defmodule MugwarriorWeb do
       import MugwarriorWeb.ErrorHelpers
       import MugwarriorWeb.Gettext
       alias MugwarriorWeb.Router.Helpers, as: Routes
+
+      import MugwarriorWeb.AuthHelper
     end
   end
 

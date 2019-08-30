@@ -15,30 +15,12 @@
       <section>
         <nav role="navigation">
           <ul>
-          <%= if is_nil @conn.assigns[:current_user] do %>
-            <li><%= link gettext("Create Account"), to: Routes.signup_user_path(@conn, :new) %></li>
-            <li><%= link gettext("Log In"), to: Routes.auth_user_path(@conn, :new) %></li>
-          <% else %>
-            <li><%= link gettext("Edit Profile"), to: Routes.profile_path(@conn, :edit) %></li>
-            <li><%= link gettext("Logout"), to: Routes.auth_user_path(@conn, :delete), method: :post %></li>
+          <%= render MugwarriorWeb.Membership.IdentityView, "_auth_menu.html", assigns %>
+          <%= if authenticated?(@conn) do %>
             <li>
               <%= gettext("Organizations") %>
               <ul>
-                <li>Your Swap Groups
-                  <ul>
-                    <%= for org <- organizations(@conn) do %>
-                      <li><%= link org.name, to: Routes.organization_path(@conn, :show, org.slug) %></li>
-                    <% end %>
-                  </ul>
-                </li>
-                <li>Your Invitations
-                  <ul>
-                    <%= for %{id: id, organization: org} <- invitations(@conn) do %>
-                      <li><%= org.name %> <%= link "(Accept)", to: Routes.organization_invite_user_path(@conn, :update, org.slug, id) %>
-                      </li>
-                    <% end %>
-                  </ul>
-                </li>
+                <%= render MugwarriorWeb.OrganizationView, "_link_list.html", assigns %>
                 <li><%= link gettext("New Swap Group"), to: Routes.membership_organization_path(@conn, :new) %></li>
               </ul>
             </li>

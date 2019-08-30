@@ -4,11 +4,12 @@ defmodule MugwarriorWeb.EnsureUserAuthorizedPlug do
   """
 
   import Plug.Conn
+  alias Plug.Conn
 
   @spec init(any) :: any
   def init(opts), do: opts
 
-  @spec call(Plug.Conn.t(), any) :: Plug.Conn.t()
+  @spec call(Conn.t(), any) :: Conn.t()
   def call(%{assigns: %{current_user_is_member: true}} = conn, _opts), do: conn
 
   def call(conn, _opts) do

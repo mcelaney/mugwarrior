@@ -3,17 +3,18 @@ defmodule MugwarriorWeb.InvitationController do
 
   alias Mugwarrior.Membership
   alias Mugwarrior.Membership.Invitation
+  alias Plug.Conn
 
-  @spec new(Plug.Conn.t(), map) :: Plug.Conn.t() | no_return()
+  @spec new(Conn.t(), map) :: Conn.t() | no_return()
   def new(conn, %{"organization_id" => slug}) do
     changeset = Membership.change_invitation(%Invitation{})
 
     conn
-    |> Plug.Conn.assign(:organization_slug, slug)
+    |> Conn.assign(:organization_slug, slug)
     |> render("new.html", changeset: changeset)
   end
 
-  @spec create(Plug.Conn.t(), map) :: Plug.Conn.t() | no_return()
+  @spec create(Conn.t(), map) :: Conn.t() | no_return()
   def create(conn, %{"organization_id" => slug, "invitation" => params}) do
     slug
     |> Membership.create_invitation(params)
@@ -25,12 +26,12 @@ defmodule MugwarriorWeb.InvitationController do
 
       {:error, %Ecto.Changeset{} = changeset} ->
         conn
-        |> Plug.Conn.assign(:organization_slug, slug)
+        |> Conn.assign(:organization_slug, slug)
         |> render("new.html", changeset: changeset)
     end
   end
 
-  @spec update(Plug.Conn.t(), map) :: Plug.Conn.t() | no_return()
+  @spec update(Conn.t(), map) :: Conn.t() | no_return()
   def update(conn, %{"id" => invitation_id}) do
     invitation_id
     |> Membership.accept_invite(conn.assigns.current_user)
@@ -47,7 +48,7 @@ defmodule MugwarriorWeb.InvitationController do
     end
   end
 
-  @spec delete(Plug.Conn.t(), map) :: Plug.Conn.t() | no_return()
+  @spec delete(Conn.t(), map) :: Conn.t() | no_return()
   def delete(conn, %{"organization_id" => slug, "id" => id}) do
     invitation = Membership.get_invitation!(slug, id)
     {:ok, _invitation} = Membership.delete_invitation(invitation)

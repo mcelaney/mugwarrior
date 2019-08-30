@@ -52,9 +52,9 @@ defmodule Mugwarrior.Membership.Manage.RolesTest do
       |> Repo.insert!()
 
       Membership.promote_profile_to_org_admin(profile, org)
-      refute Membership.can_demote_admins?(org, %{profile: profile})
+      refute Membership.can_demote_admins?(%User{profile: profile}, org)
       Membership.promote_profile_to_org_admin(other_profile, org)
-      assert Membership.can_demote_admins?(org, %{profile: profile})
+      assert Membership.can_demote_admins?(%User{profile: profile}, org)
     end
 
     test "is_organization_admin?/1" do

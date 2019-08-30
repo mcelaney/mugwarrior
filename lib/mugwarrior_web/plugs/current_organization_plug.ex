@@ -11,7 +11,7 @@ defmodule MugwarriorWeb.CurrentOrganizationPlug do
   @spec init(any) :: any
   def init(opts), do: opts
 
-  @spec call(Plug.Conn.t(), any) :: Plug.Conn.t()
+  @spec call(Conn.t(), any) :: Conn.t()
   def call(conn, _opts) do
     organization = fetch_organization_from_url(conn)
     role = conn |> profile() |> user_role(organization)
@@ -22,14 +22,14 @@ defmodule MugwarriorWeb.CurrentOrganizationPlug do
     |> Conn.assign(:current_user_is_admin, admin?(role))
   end
 
-  @spec fetch_organization_from_url(Plug.Conn.t()) :: Organization.t()
+  @spec fetch_organization_from_url(Conn.t()) :: Organization.t()
   def fetch_organization_from_url(%{path_info: ["o", slug | _]} = conn) do
     conn |> profile() |> Membership.get_organization!(slug)
   end
 
   def fetch_organization_from_url(_), do: nil
 
-  @spec profile(Plug.Conn.t()) :: Profile.t()
+  @spec profile(Conn.t()) :: Profile.t()
   defp profile(%{assigns: %{current_user: %{profile: profile}}}), do: profile
   defp profile(_), do: nil
 

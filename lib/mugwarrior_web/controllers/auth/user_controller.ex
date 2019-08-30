@@ -4,8 +4,9 @@ defmodule MugwarriorWeb.Auth.UserController do
   alias Mugwarrior.Auth
   alias Mugwarrior.Auth.User
   alias MugwarriorWeb.Guardian.Tokenizer.Plug, as: GuardianPlug
+  alias Plug.Conn
 
-  @spec new(Plug.Conn.t(), any) :: Plug.Conn.t()
+  @spec new(Conn.t(), any) :: Conn.t()
   def new(conn, _params) do
     changeset = Auth.change_user(%User{})
 
@@ -14,7 +15,7 @@ defmodule MugwarriorWeb.Auth.UserController do
     |> render("new.html", changeset: changeset)
   end
 
-  @spec create(Plug.Conn.t(), map) :: Plug.Conn.t() | no_return()
+  @spec create(Conn.t(), map) :: Conn.t() | no_return()
   def create(conn, %{"user" => user_params}) do
     case Auth.authenticate_user(user_params) do
       {:ok, user} ->
@@ -30,7 +31,7 @@ defmodule MugwarriorWeb.Auth.UserController do
     end
   end
 
-  @spec delete(Plug.Conn.t(), any) :: Plug.Conn.t()
+  @spec delete(Conn.t(), any) :: Conn.t()
   def delete(conn, _) do
     conn
     |> GuardianPlug.sign_out()

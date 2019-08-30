@@ -33,7 +33,7 @@ defmodule Mugwarrior.Membership do
   defdelegate list_organizations_for_profile(profile), to: ManageProfiles
   defdelegate update_profile(user, params), to: ManageProfiles
 
-  defdelegate can_demote_admins?(org, user), to: ManageRoles
+  defdelegate can_demote_admins?(user, org), to: ManageRoles
   defdelegate demote_profile_to_org_member(profile, org), to: ManageRoles
   defdelegate is_organization_admin?(org, user), to: ManageRoles
   defdelegate is_organization_admin?(role), to: ManageRoles

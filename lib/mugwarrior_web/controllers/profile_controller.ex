@@ -3,8 +3,9 @@ defmodule MugwarriorWeb.ProfileController do
 
   alias Mugwarrior.Membership
   alias Mugwarrior.Membership.User
+  alias Plug.Conn
 
-  @spec edit(Plug.Conn.t(), any) :: Plug.Conn.t()
+  @spec edit(Conn.t(), any) :: Conn.t()
   def edit(conn, _params) do
     render(conn, "edit.html",
       profile: conn |> current_user() |> Map.get(:profile),
@@ -12,7 +13,7 @@ defmodule MugwarriorWeb.ProfileController do
     )
   end
 
-  @spec update(Plug.Conn.t(), map) :: Plug.Conn.t() | no_return()
+  @spec update(Conn.t(), map) :: Conn.t() | no_return()
   def update(conn, %{"profile" => params}) do
     case conn |> current_user() |> Membership.update_profile(params) do
       {:ok, _} ->
@@ -25,6 +26,6 @@ defmodule MugwarriorWeb.ProfileController do
     end
   end
 
-  @spec current_user(Plug.Conn.t()) :: User.t()
+  @spec current_user(Conn.t()) :: User.t()
   defp current_user(conn), do: conn.assigns.current_user
 end

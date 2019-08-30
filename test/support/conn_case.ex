@@ -24,11 +24,12 @@ defmodule MugwarriorWeb.ConnCase do
       alias Mugwarrior.Signup
       alias MugwarriorWeb.Guardian.Tokenizer.Plug, as: GuardianPlug
       alias MugwarriorWeb.Router.Helpers, as: Routes
+      alias Plug.Conn
 
       # The default endpoint for testing
       @endpoint MugwarriorWeb.Endpoint
 
-      @spec authed_conn(Plug.Conn.t()) :: Plug.Conn.t()
+      @spec authed_conn(Conn.t()) :: Conn.t()
       def authed_conn(conn) do
         user_params = %{password: "some password", username: "some username"}
         {:ok, user} = Signup.create_user(user_params)
@@ -38,7 +39,7 @@ defmodule MugwarriorWeb.ConnCase do
         |> GuardianPlug.sign_in(user)
       end
 
-      @spec authed_conn(Plug.Conn.t(), Ecto.Schema.t()) :: Plug.Conn.t()
+      @spec authed_conn(Conn.t(), Ecto.Schema.t()) :: Conn.t()
       def authed_conn(conn, user) do
         conn
         |> bypass_through(Routes, [:browser, :guardian, :ensure_auth])

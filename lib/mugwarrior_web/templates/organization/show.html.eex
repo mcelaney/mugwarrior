@@ -4,44 +4,10 @@
 <%= for org_profile <- @org.organization_profiles do %>
   <li>
     (<%= org_profile.role %>)
-    <%=
-      if Mugwarrior.Membership.can_demote_admins?(@org, @conn.assigns.current_user) do
-        link gettext("(Demote)"), to: Routes.organization_role_change_path(@conn, :update, @org.slug, org_profile.profile.id, role: "demote")
-      end
-    %>
-    <%=
-      if @conn.assigns.current_user_is_admin and not Mugwarrior.Membership.is_organization_admin?(org_profile.role) do
-        link gettext("(Promote)"), to: Routes.organization_role_change_path(@conn, :update, @org.slug, org_profile.profile.id, role: "promote")
-      end
-    %>
-    <%=
-      if @conn.assigns.current_user_is_admin and not Mugwarrior.Membership.is_organization_admin?(org_profile.role) do
-        link gettext("(Remove)"), to: Routes.organization_role_change_path(@conn, :update, @org.slug, org_profile.profile.id, role: "remove")
-      end
-    %>
-    <%=
-      if not Mugwarrior.Membership.is_organization_admin?(org_profile.role) and @conn.assigns.current_user.profile.id == org_profile.profile_id do
-        link gettext("(Quit group)"), to: Routes.organization_role_change_path(@conn, :update, @org.slug, org_profile.profile.id, role: "quit")
-      end
-    %>
+    <%= render MugwarriorWeb.ProfileView, "_management_tools.html", %{org_profile: org_profile, org: @org, conn: @conn} %>
     <%= MugwarriorWeb.ProfileView.display_name(org_profile.profile) %>
   </li>
 <% end %>
 </ul>
 
-<%= if @conn.assigns.current_user_is_admin do %>
-<h2><%= gettext("Invites") %></h2>
-<ul>
-<%= for invitation <- @org.invitations do %>
-  <li>
-    <%=
-      link gettext("(Remove)"), to: Routes.organization_invitation_path(@conn, :delete, @org.slug, invitation),
-                                method: :delete,
-                                data: [confirm: "Are you sure?"]
-    %>
-    <%= invitation.email %>
-  </li>
-<% end %>
-  <li><%= link(gettext("New Member"), to: Routes.organization_invitation_path(@conn, :new, @org.slug)) %></li>
-</ul>
-<% end %>
+<%= render MugwarriorWeb.InvitationView, "_invitation_management.html", assigns %>
